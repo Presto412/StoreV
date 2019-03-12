@@ -1,8 +1,4 @@
-# Parallel-Encryption-Decryption
-
-## Description
-
-Encrypts the image using DES algorithm using parallel and distributed computation with the help of Docker Swarm. Runs on 2 systems.
+# Storage Virtualization
 
 ## Steps to run
 

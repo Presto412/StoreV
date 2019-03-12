@@ -5,42 +5,46 @@ networks:
     external:
       name: testnet
 services:
-  encrpytion_server1:
+  storage_server1:
     deploy:
       replicas: 1
       restart_policy:
         condition: on-failure
         delay: 5s
         max_attempts: 3
-      placement:
-        constraints:
-          - node.hostname == your-hostname-1-here
-    image: pdc/image-encryption
-    command: npm start
-    hostname: server1_server.example.com
+      # placement:
+      #   constraints:
+      #     - node.hostname == your-hostname-1-here
+    image: virt/storage-virtualization
+    command: ./node_modules/.bin/nodemon
+    hostname: server1.example.com
     ports:
       - "3000:3000"
+    volumes:
+      - .:/usr/src/app
     networks:
       testnet:
         aliases:
-          - server1_server.example.com
+          - server1.example.com
 
-  encrpytion_server2:
+  storage_server2:
     deploy:
       replicas: 1
       restart_policy:
         condition: on-failure
         delay: 5s
         max_attempts: 3
-      placement:
-        constraints:
-          - node.hostname == your-hostname-2-here
-    image: pdc/image-encryption
-    hostname: server2_server.example.com
-    command: npm start
+      # placement:
+      #   constraints:
+      #     - node.hostname == your-hostname-2-here
+    image: virt/storage-virtualization
+    hostname: server2.example.com
+    command: ./node_modules/.bin/nodemon
     ports:
       - "3001:3000"
+    volumes:
+      - .:/usr/src/app
     networks:
       testnet:
         aliases:
-          - server2_server.example.com
+          - server2.example.com
