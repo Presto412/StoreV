@@ -5,6 +5,11 @@
   "scripts": {
     "start": "node ./src/bin/www"
   },
+  "nodemonConfig": {
+    "ignore": [
+      "data/*.json"
+    ]
+  },
   "dependencies": {
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
