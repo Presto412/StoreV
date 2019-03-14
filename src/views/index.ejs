@@ -5,8 +5,14 @@
     <link rel="stylesheet" href="/stylesheets/style.css" />
   </head>
   <body>
+    <%- include partials/nav %>
     <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
+    <% if(success) { %>
+    <p style="color:forestgreen"><%= message %></p>
+    <% } else { %>
+    <p style="color: red"><%= message %></p>
+    <% } %>
+    <p>Upload any file</p>
     <form action="/upload" method="post" enctype="multipart/form-data">
       <input type="file" name="uploadFile" />
       <input type="submit" />

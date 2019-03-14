@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>StorageVirtualization</title>
+    <link rel="stylesheet" href="/stylesheets/style.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  </head>
+  <body>
+    <%- include partials/nav %>
+    <style>
+      table {
+        border-collapse: collapse;
+      }
+
+      table,
+      th,
+      td {
+        border: 1px solid black;
+      }
+    </style>
+    <% if(message) {%>
+    <p style="color: red"><%= message %></p>
+    <% } %>
+    <table id="table1">
+      <tr>
+        <td>
+          Filename
+        </td>
+        <td>
+          Size(in bytes)
+        </td>
+        <td>Date Uploaded</td>
+        <td>
+          Hash
+        </td>
+        <td>
+          Action
+        </td>
+      </tr>
+      <% map.forEach(function(file, i){ %>
+      <tr>
+        <td><%= file.name %></td>
+        <td><%= file.size %></td>
+        <td><%= file.date %></td>
+        <td><%= file.hash %></td>
+        <td>
+          <a
+            class="button"
+            href="/download?hash=<%= file.hash %>"
+            target="_blank"
+            >Download</a
+          >
+        </td>
+      </tr>
+      <% }); %>
+    </table>
+  </body>
+</html>
