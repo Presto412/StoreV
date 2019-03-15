@@ -191,41 +191,49 @@ router.get("/download", async (req, res, next) => {
 
   const fileHostDetails = fileBackups[extPathIndex];
 
-  try {
-    request.get(
-      "http://" +
-        fileHostDetails.hostname +
-        ":3000/downloadFromPath?path=" +
-        fileHostDetails.path,
-      (err, response, body) => {
-        const tempPath = path.join(
-          __dirname,
-          "..",
-          "..",
-          "data",
-          fileDetails.name
-        );
-
-        fs.writeFile(tempPath, body, err => {
-          if (err) {
-            console.log("error");
-            throw err;
-          }
-
-          res.download(tempPath, fileDetails.name, () => {
-            fs.unlinkSync(tempPath);
-          });
-        });
+  request.get(
+    "http://" +
+      fileHostDetails.hostname +
+      ":3000/downloadFromPath?path=" +
+      fileHostDetails.path,
+    (err, response, body) => {
+      if (err) {
+        console.log("request error", error);
+        return next(error);
       }
-    );
-  } catch (error) {
-    return next(error);
-  }
+      console.log(
+        "http://" +
+          fileHostDetails.hostname +
+          ":3000/downloadFromPath?path=" +
+          fileHostDetails.path
+      );
+
+      const tempPath = path.join(
+        __dirname,
+        "..",
+        "..",
+        "data",
+        fileDetails.name
+      );
+      console.log(response.url, response.headers);
+
+      fs.writeFile(tempPath, body, err => {
+        if (err) {
+          console.log("error");
+          throw err;
+        }
+
+        res.download(tempPath, fileDetails.name, () => {
+          fs.unlinkSync(tempPath);
+        });
+      });
+    }
+  );
 });
 
 router.get("/downloadFromPath", (req, res, next) => {
   try {
-    return res.sendFile(path.join(__dirname, "..", "..", req.query.path));
+    return res.sendFile(req.query.path);
   } catch (error) {
     console.log(error);
   }
