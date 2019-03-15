@@ -12,18 +12,18 @@ services:
         condition: on-failure
         delay: 5s
         max_attempts: 3
-      # placement:
-      #   constraints:
-      #     - node.hostname == your-hostname-1-here
+      placement:
+        constraints:
+          - node.hostname == priyansh-Inspiron-3543
     image: virt/storage-virtualization
-    command: ./node_modules/.bin/nodemon
+    command: npm start
     hostname: server1.example.com
     environment:
       - SELF_HOSTNAME=server1.example.com
     ports:
       - "3000:3000"
     volumes:
-      - .:/usr/src/app
+      - "/tmp/uploads:/tmp/uploads"
     networks:
       testnet:
         aliases:
@@ -36,18 +36,18 @@ services:
         condition: on-failure
         delay: 5s
         max_attempts: 3
-      # placement:
-      #   constraints:
-      #     - node.hostname == your-hostname-2-here
+      placement:
+        constraints:
+          - node.hostname == harshit-Lenovo-G50-80
     image: virt/storage-virtualization
     hostname: server2.example.com
-    command: ./node_modules/.bin/nodemon
+    command: npm start
     ports:
       - "3001:3000"
     environment:
       - SELF_HOSTNAME=server2.example.com
     volumes:
-      - .:/usr/src/app
+      - "/tmp/uploads:/tmp/uploads"
     networks:
       testnet:
         aliases:
@@ -60,67 +60,65 @@ services:
         condition: on-failure
         delay: 5s
         max_attempts: 3
-      # placement:
-      #   constraints:
-      #     - node.hostname == your-hostname-2-here
+      placement:
+        constraints:
+          - node.hostname == Anant
     image: virt/storage-virtualization
     hostname: server3.example.com
-    command: ./node_modules/.bin/nodemon
+    command: npm start
     ports:
       - "3002:3000"
     environment:
       - SELF_HOSTNAME=server3.example.com
     volumes:
-      - .:/usr/src/app
+      - "/tmp/uploads:/tmp/uploads"
     networks:
       testnet:
         aliases:
           - server3.example.com
-
-  storage_server4:
-    deploy:
-      replicas: 1
-      restart_policy:
-        condition: on-failure
-        delay: 5s
-        max_attempts: 3
-      # placement:
-      #   constraints:
-      #     - node.hostname == your-hostname-2-here
-    image: virt/storage-virtualization
-    hostname: server4.example.com
-    command: ./node_modules/.bin/nodemon
-    ports:
-      - "3003:3000"
-    environment:
-      - SELF_HOSTNAME=server4.example.com
-    volumes:
-      - .:/usr/src/app
-    networks:
-      testnet:
-        aliases:
-          - server4.example.com
-
-  storage_server5:
-    deploy:
-      replicas: 1
-      restart_policy:
-        condition: on-failure
-        delay: 5s
-        max_attempts: 3
-      # placement:
-      #   constraints:
-      #     - node.hostname == your-hostname-2-here
-    image: virt/storage-virtualization
-    hostname: server5.example.com
-    command: ./node_modules/.bin/nodemon
-    environment:
-      - SELF_HOSTNAME=server5.example.com
-    ports:
-      - "3004:3000"
-    volumes:
-      - .:/usr/src/app
-    networks:
-      testnet:
-        aliases:
-          - server5.example.com
+  # storage_server4:
+  #   deploy:
+  #     replicas: 1
+  #     restart_policy:
+  #       condition: on-failure
+  #       delay: 5s
+  #       max_attempts: 3
+  #     # placement:
+  #     #   constraints:
+  #     #     - node.hostname == your-hostname-2-here
+  #   image: virt/storage-virtualization
+  #   hostname: server4.example.com
+  #   command: npm start
+  #   volumes:
+  #     - "/tmp/uploads:/tmp/uploads"
+  #   ports:
+  #     - "3003:3000"
+  #   environment:
+  #     - SELF_HOSTNAME=server4.example.com
+  #   networks:
+  #     testnet:
+  #       aliases:
+  #         - server4.example.com
+  # storage_server5:
+  #   deploy:
+  #     replicas: 1
+  #     restart_policy:
+  #       condition: on-failure
+  #       delay: 5s
+  #       max_attempts: 3
+  #     # placement:
+  #     #   constraints:
+  #     #     - node.hostname == your-hostname-2-here
+  #   image: virt/storage-virtualization
+  #   hostname: server5.example.com
+  #   command: npm start
+  #   volumes:
+  #     - "/tmp/uploads:/tmp/uploads"
+  #   environment:
+  #     - SELF_HOSTNAME=server5.example.com
+  #   ports:
+  #     - "3004:3000"
+  #   networks:
+  #     testnet:
+  #       aliases:
+  #         - server5.example.com
