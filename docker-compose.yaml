@@ -16,7 +16,7 @@ services:
         constraints:
           - node.hostname == priyansh-Inspiron-3543
     image: presto412/storev1
-    command: ./node_modules/.bin/nodemon
+    command: npm start
     hostname: server1.example.com
     environment:
       - SELF_HOSTNAME=server1.example.com
@@ -24,7 +24,7 @@ services:
       - "3000:3000"
     volumes:
       - "/tmp/uploads:/tmp/uploads"
-      - ".:/usr/src/app/"
+      # - ".:/usr/src/app/"
     networks:
       testnet:
         aliases:
@@ -49,7 +49,7 @@ services:
       - SELF_HOSTNAME=server2.example.com
     volumes:
       - "/tmp/uploads:/tmp/uploads"
-      - ".:/usr/src/app/"
+      # - ".:/usr/src/app/"
     networks:
       testnet:
         aliases:
@@ -74,7 +74,7 @@ services:
       - SELF_HOSTNAME=server3.example.com
     volumes:
       - "/tmp/uploads:/tmp/uploads"
-      - ".:/usr/src/app/"
+      # - ".:/usr/src/app/"
     networks:
       testnet:
         aliases:
@@ -95,7 +95,7 @@ services:
     command: npm start
     volumes:
       - "/tmp/uploads:/tmp/uploads"
-      - ".:/usr/src/app/"
+      # - ".:/usr/src/app/"
     ports:
       - "3003:3000"
     environment:
@@ -120,7 +120,7 @@ services:
     command: npm start
     volumes:
       - "/tmp/uploads:/tmp/uploads"
-      - ".:/usr/src/app/"
+      # - ".:/usr/src/app/"
     environment:
       - SELF_HOSTNAME=server5.example.com
     ports:
