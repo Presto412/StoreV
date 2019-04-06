@@ -15,7 +15,7 @@ services:
       placement:
         constraints:
           - node.hostname == priyansh-Inspiron-3543
-    image: presto412/storev1
+    image: presto412/storev1:latest
     command: npm start
     hostname: server1.example.com
     environment:
@@ -40,7 +40,7 @@ services:
       # placement:
       #   constraints:
       #     - node.hostname == harshit-Lenovo-G50-80
-    image: presto412/storev1
+    image: presto412/storev1:latest
     hostname: server2.example.com
     command: npm start
     ports:
@@ -65,7 +65,7 @@ services:
       placement:
         constraints:
           - node.hostname == priyansh-Inspiron-3543
-    image: presto412/storev1
+    image: presto412/storev1:latest
     hostname: server3.example.com
     command: npm start
     ports:
@@ -90,7 +90,7 @@ services:
       # placement:
       #   constraints:
       #     - node.hostname == your-hostname-2-here
-    image: presto412/storev1
+    image: presto412/storev1:latest
     hostname: server4.example.com
     command: npm start
     volumes:
@@ -115,7 +115,7 @@ services:
       # placement:
       #   constraints:
       #     - node.hostname == your-hostname-2-here
-    image: presto412/storev1
+    image: presto412/storev1:latest
     hostname: server5.example.com
     command: npm start
     volumes:

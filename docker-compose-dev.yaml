@@ -1,0 +1,131 @@
+version: "3.2"
+
+networks:
+  testnet:
+    external:
+      name: testnet
+services:
+  storage_server1:
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+      placement:
+        constraints:
+          - node.hostname == priyansh-Inspiron-3543
+    image: presto412/storev1
+    command: ./node_modules/.bin/nodemon
+    hostname: server1.example.com
+    environment:
+      - SELF_HOSTNAME=server1.example.com
+    ports:
+      - "3000:3000"
+    volumes:
+      - "/tmp/uploads:/tmp/uploads"
+      - ".:/usr/src/app/"
+    networks:
+      testnet:
+        aliases:
+          - server1.example.com
+
+  storage_server2:
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+      # placement:
+      #   constraints:
+      #     - node.hostname == harshit-Lenovo-G50-80
+    image: presto412/storev1
+    hostname: server2.example.com
+    command: ./node_modules/.bin/nodemon
+    ports:
+      - "3001:3000"
+    environment:
+      - SELF_HOSTNAME=server2.example.com
+    volumes:
+      - "/tmp/uploads:/tmp/uploads"
+      - ".:/usr/src/app/"
+    networks:
+      testnet:
+        aliases:
+          - server2.example.com
+
+  storage_server3:
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+      placement:
+        constraints:
+          - node.hostname == priyansh-Inspiron-3543
+    image: presto412/storev1
+    hostname: server3.example.com
+    command: ./node_modules/.bin/nodemon
+    ports:
+      - "3002:3000"
+    environment:
+      - SELF_HOSTNAME=server3.example.com
+    volumes:
+      - "/tmp/uploads:/tmp/uploads"
+      - ".:/usr/src/app/"
+    networks:
+      testnet:
+        aliases:
+          - server3.example.com
+
+  storage_server4:
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+      # placement:
+      #   constraints:
+      #     - node.hostname == your-hostname-2-here
+    image: presto412/storev1
+    hostname: server4.example.com
+    command: ./node_modules/.bin/nodemon
+    volumes:
+      - "/tmp/uploads:/tmp/uploads"
+      - ".:/usr/src/app/"
+    ports:
+      - "3003:3000"
+    environment:
+      - SELF_HOSTNAME=server4.example.com
+    networks:
+      testnet:
+        aliases:
+          - server4.example.com
+
+  storage_server5:
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+      # placement:
+      #   constraints:
+      #     - node.hostname == your-hostname-2-here
+    image: presto412/storev1
+    hostname: server5.example.com
+    command: ./node_modules/.bin/nodemon
+    volumes:
+      - "/tmp/uploads:/tmp/uploads"
+      - ".:/usr/src/app/"
+    environment:
+      - SELF_HOSTNAME=server5.example.com
+    ports:
+      - "3004:3000"
+    networks:
+      testnet:
+        aliases:
+          - server5.example.com

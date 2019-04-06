@@ -14,6 +14,7 @@ const mapPath = path.join(
   "data",
   "maps-" + process.env.SELF_HOSTNAME.split(".example.com")[0] + ".json"
 );
+
 /* GET home page. */
 router.get("/", function(req, res, next) {
   res.render("index", {
@@ -49,9 +50,8 @@ router.post("/upload", upload.single("uploadFile"), async (req, res, next) => {
   }
   const backupUrl = "/backup";
   const mapUrl = "/updateMaps";
-  let fileContent = fs.readFileSync(req.file.path);
   let fileStream = fs.createReadStream(req.file.path);
-  const fileHash = sha1(fileContent);
+  const fileHash = req.body.fileHash;
   let map;
   let mapJson = {};
   if (fs.existsSync(mapPath)) {
@@ -170,7 +170,7 @@ router.get("/fileList", (req, res, next) => {
   res.render("list.ejs", { map, message: "" });
 });
 
-router.get("/download", async (req, res, next) => {
+router.get("/download", (req, res, next) => {
   const fileHash = req.query.hash;
   if (!fs.existsSync(mapPath)) {
     return res.json({ message: "no files exist" });
@@ -198,8 +198,8 @@ router.get("/download", async (req, res, next) => {
       fileHostDetails.path,
     (err, response, body) => {
       if (err) {
-        console.log("request error", error);
-        return next(error);
+        console.log("request error", err);
+        return next(err);
       }
       console.log(
         "http://" +
@@ -217,10 +217,10 @@ router.get("/download", async (req, res, next) => {
       );
       console.log(response.url, response.headers);
 
-      fs.writeFile(tempPath, body, err => {
-        if (err) {
-          console.log("error");
-          throw err;
+      fs.writeFile(tempPath, body, error => {
+        if (error) {
+          console.log("erroror");
+          throw error;
         }
 
         res.download(tempPath, fileDetails.name, () => {
@@ -237,6 +237,25 @@ router.get("/downloadFromPath", (req, res, next) => {
   } catch (error) {
     console.log(error);
   }
+});
+
+router.post("/checkHash", (req, res, next) => {
+  console.log(req.body.fileHash);
+
+  if (!fs.existsSync(mapPath)) {
+    return res.json({ success: false, message: "no files yet" });
+  }
+  let map = JSON.parse(fs.readFileSync(mapPath));
+  console.log(map);
+
+  console.log(
+    "TCL: Object.keys(map).indexOf(req.body.fileHash);",
+    Object.keys(map).indexOf(req.body.fileHash)
+  );
+  if (req.body.fileHash && Object.keys(map).indexOf(req.body.fileHash) !== -1) {
+    return res.json({ success: true, message: "file doesn't exist" });
+  }
+  return res.json({ success: false });
 });
 
 module.exports = router;
