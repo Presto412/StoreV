@@ -25,7 +25,7 @@ services:
     environment:
       - SELF_HOSTNAME=nyc.central.com
     ports:
-      - "3000:3000"
+      - "80:3000"
     networks:
       testnet:
         aliases:
@@ -45,7 +45,7 @@ services:
     hostname: toronto.storage.com
     command: npm start
     ports:
-      - "3000:3000"
+      - "80:3000"
     environment:
       - SELF_HOSTNAME=toronto.storage.com
     volumes:
@@ -70,7 +70,7 @@ services:
     hostname: singapore.storage.com
     command: npm start
     ports:
-      - "3000:3000"
+      - "80:3000"
     environment:
       - SELF_HOSTNAME=singapore.storage.com
     volumes:
@@ -98,7 +98,7 @@ services:
       - "/tmp/uploads:/tmp/uploads"
       # - ".:/usr/src/app/"
     ports:
-      - "3000:3000"
+      - "80:3000"
     environment:
       - SELF_HOSTNAME=amsterdam.storage.com
     networks:
@@ -122,7 +122,7 @@ services:
     environment:
       - SELF_HOSTNAME=bangalore.storage.com
     ports:
-      - "3000:3000"
+      - "80:3000"
     volumes:
       - "/tmp/uploads:/tmp/uploads"
       # - ".:/usr/src/app/"
