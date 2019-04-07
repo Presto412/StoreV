@@ -21,7 +21,7 @@ const cities = [
 ];
 const hostnameToIP = {
   "bangalore.storage.com": process.env.STORAGE_BANGALORE_IP,
-  "toronot.storage.com": process.env.STORAGE_TORONTO_IP,
+  "toronto.storage.com": process.env.STORAGE_TORONTO_IP,
   "singapore.storage.com": process.env.STORAGE_SINGAPORE_IP,
   "amsterdam.storage.com": process.env.STORAGE_AMSTERDAM_IP
 };
