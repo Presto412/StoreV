@@ -20,10 +20,10 @@ const cities = [
   "singapore.storage.com"
 ];
 const hostnameToIP = {
-  "bangalore.storage.com": process.env.STORAGE_BANGALORE_IP,
-  "toronto.storage.com": process.env.STORAGE_TORONTO_IP,
-  "singapore.storage.com": process.env.STORAGE_SINGAPORE_IP,
-  "amsterdam.storage.com": process.env.STORAGE_AMSTERDAM_IP
+  "toronto.storage.com": process.env.STORAGE_TORONTO_IP + ":3001",
+  "singapore.storage.com": process.env.STORAGE_SINGAPORE_IP + ":3002",
+  "amsterdam.storage.com": process.env.STORAGE_AMSTERDAM_IP + ":3003",
+  "bangalore.storage.com": process.env.STORAGE_BANGALORE_IP + ":3004"
 };
 
 const generateRandomIP = () => {
@@ -83,98 +83,103 @@ router.get("/", function(req, res, next) {
 });
 
 router.post("/upload", upload.single("uploadFile"), async (req, res, next) => {
-  let detailsArray = [];
-  // get all servers
-  // static for now
-  let hostnames = cities;
-  let hostnamesToBackup = [];
-  hostnamesToBackup[0] =
-    hostnames[Math.floor(Math.random() * hostnames.length)];
-  while (true) {
-    if (hostnames.length < 2) {
-      break;
+  try {
+    let detailsArray = [];
+    // get all servers
+    // static for now
+    let hostnames = cities;
+    let hostnamesToBackup = [];
+    hostnamesToBackup[0] =
+      hostnames[Math.floor(Math.random() * hostnames.length)];
+    while (true) {
+      if (hostnames.length < 2) {
+        break;
+      }
+      let elem = hostnames[Math.floor(Math.random() * hostnames.length)];
+      if (elem !== hostnamesToBackup[0]) {
+        hostnamesToBackup[1] = elem;
+        break;
+      }
     }
-    let elem = hostnames[Math.floor(Math.random() * hostnames.length)];
-    if (elem !== hostnamesToBackup[0]) {
-      hostnamesToBackup[1] = elem;
-      break;
+    const backupUrl = "/backup";
+    const mapUrl = "/updateMaps";
+    let fileStream = fs.createReadStream(req.file.path);
+    const fileHash = req.body.fileHash;
+    let map;
+    let mapJson = {};
+    if (fs.existsSync(mapPath)) {
+      map = fs.readFileSync(mapPath);
+      mapJson = JSON.parse(map);
     }
-  }
-  const backupUrl = "/backup";
-  const mapUrl = "/updateMaps";
-  let fileStream = fs.createReadStream(req.file.path);
-  const fileHash = req.body.fileHash;
-  let map;
-  let mapJson = {};
-  if (fs.existsSync(mapPath)) {
-    map = fs.readFileSync(mapPath);
-    mapJson = JSON.parse(map);
-  }
-  if (mapJson[fileHash]) {
-    return res.render("index", {
-      message: "File already exists",
-      success: false,
-      title: "Storage Virtualization"
-    });
-  }
+    if (mapJson[fileHash]) {
+      return res.render("index", {
+        message: "File already exists",
+        success: false,
+        title: "Storage Virtualization"
+      });
+    }
 
-  let promises = [];
-  for (const hostname of hostnamesToBackup) {
-    let backupOptions = {
-      method: "POST",
-      url: "http://" + hostname + ":3000/" + backupUrl,
-      headers: {
-        "content-type": "multipart/form-data"
-      },
-      formData: {
-        backupFile: {
-          value: fileStream,
-          options: {
-            filename: req.file.originalname,
-            contentType: req.file.mimetype
+    let promises = [];
+    for (const hostname of hostnamesToBackup) {
+      let backupOptions = {
+        method: "POST",
+        url: "http://" + hostname + ":3000" + backupUrl,
+        headers: {
+          "content-type": "multipart/form-data"
+        },
+        formData: {
+          backupFile: {
+            value: fileStream,
+            options: {
+              filename: req.file.originalname,
+              contentType: req.file.mimetype
+            }
           }
         }
-      }
-    };
-    promises.push(request(backupOptions));
-  }
-  fs.unlinkSync(req.file.path);
-  let results = await Promise.all(promises);
+      };
+      promises.push(request(backupOptions));
+    }
+    fs.unlinkSync(req.file.path);
+    let results = await Promise.all(promises);
 
-  results.forEach(result => {
-    detailsArray.push(JSON.parse(result).details);
-  });
-
-  let backups = [];
-  detailsArray.forEach(detail => {
-    backups.push({
-      hostname: detail.hostname,
-      path: detail.path
+    results.forEach(result => {
+      detailsArray.push(JSON.parse(result).details);
     });
-  });
-  const { hostname, path, ...others } = detailsArray[0];
-  mapJson[fileHash] = {
-    details: { ...others },
-    backups
-  };
-  fs.writeFileSync(mapPath, JSON.stringify(mapJson));
 
-  let mapPromises = [];
-  for (const hostName of hostnames) {
-    var options = {
-      method: "POST",
-      url: "http://" + hostName + ":3000/" + mapUrl,
-      body: mapJson,
-      json: true
+    let backups = [];
+    detailsArray.forEach(detail => {
+      backups.push({
+        hostname: detail.hostname,
+        path: detail.path
+      });
+    });
+    const { hostname, path, ...others } = detailsArray[0];
+    mapJson[fileHash] = {
+      details: { ...others },
+      backups
     };
-    mapPromises.push(request(options));
+    fs.writeFileSync(mapPath, JSON.stringify(mapJson));
+
+    let mapPromises = [];
+    for (const hostName of hostnames) {
+      var options = {
+        method: "POST",
+        url: "http://" + hostName + ":3000" + mapUrl,
+        body: mapJson,
+        json: true
+      };
+      mapPromises.push(request(options));
+    }
+    results = await Promise.all(promises);
+    res.render("index", {
+      title: "Storage Virtualization",
+      success: true,
+      message: "Successfully uploaded!"
+    });
+  } catch (error) {
+    console.log(error);
+    return next(error);
   }
-  results = await Promise.all(promises);
-  res.render("index", {
-    title: "Storage Virtualization",
-    success: true,
-    message: "Successfully uploaded!"
-  });
 });
 
 router.post("/backup", upload.single("backupFile"), (req, res, next) => {
