@@ -271,7 +271,7 @@ router.get("/getServerToDownloadFrom", async (req, res, next) => {
           url:
             "http://" +
             hostnameToIP[server.hostname] +
-            ":3000/download?" +
+            ":3000/download?hash=" +
             req.query.hash
         });
       }
