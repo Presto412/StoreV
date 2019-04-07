@@ -4,33 +4,34 @@ networks:
   testnet:
     external:
       name: testnet
+
 services:
-  storage_server1:
+  central_server:
     deploy:
       replicas: 1
       restart_policy:
         condition: on-failure
         delay: 5s
         max_attempts: 3
-      placement:
-        constraints:
-          - node.hostname == priyansh-Inspiron-3543
+      # placement:
+      #   constraints:
+      #     - node.hostname == your-hostname-2-here
     image: presto412/storev1
+    hostname: nyc.central.com
     command: ./node_modules/.bin/nodemon
-    hostname: server1.example.com
-    environment:
-      - SELF_HOSTNAME=server1.example.com
-    ports:
-      - "3000:3000"
     volumes:
       - "/tmp/uploads:/tmp/uploads"
       - ".:/usr/src/app/"
+    environment:
+      - SELF_HOSTNAME=nyc.central.com
+    ports:
+      - "3000:3000"
     networks:
       testnet:
         aliases:
-          - server1.example.com
+          - nyc.central.com
 
-  storage_server2:
+  storage_toronto:
     deploy:
       replicas: 1
       restart_policy:
@@ -41,21 +42,21 @@ services:
       #   constraints:
       #     - node.hostname == harshit-Lenovo-G50-80
     image: presto412/storev1
-    hostname: server2.example.com
+    hostname: toronto.storage.com
     command: ./node_modules/.bin/nodemon
     ports:
       - "3001:3000"
     environment:
-      - SELF_HOSTNAME=server2.example.com
+      - SELF_HOSTNAME=toronto.storage.com
     volumes:
       - "/tmp/uploads:/tmp/uploads"
       - ".:/usr/src/app/"
     networks:
       testnet:
         aliases:
-          - server2.example.com
+          - toronto.storage.com
 
-  storage_server3:
+  storage_singapore:
     deploy:
       replicas: 1
       restart_policy:
@@ -66,21 +67,21 @@ services:
         constraints:
           - node.hostname == priyansh-Inspiron-3543
     image: presto412/storev1
-    hostname: server3.example.com
+    hostname: singapore.storage.com
     command: ./node_modules/.bin/nodemon
     ports:
       - "3002:3000"
     environment:
-      - SELF_HOSTNAME=server3.example.com
+      - SELF_HOSTNAME=singapore.storage.com
     volumes:
       - "/tmp/uploads:/tmp/uploads"
       - ".:/usr/src/app/"
     networks:
       testnet:
         aliases:
-          - server3.example.com
+          - singapore.storage.com
 
-  storage_server4:
+  storage_amsterdam:
     deploy:
       replicas: 1
       restart_policy:
@@ -91,7 +92,7 @@ services:
       #   constraints:
       #     - node.hostname == your-hostname-2-here
     image: presto412/storev1
-    hostname: server4.example.com
+    hostname: amsterdam.storage.com
     command: ./node_modules/.bin/nodemon
     volumes:
       - "/tmp/uploads:/tmp/uploads"
@@ -99,33 +100,33 @@ services:
     ports:
       - "3003:3000"
     environment:
-      - SELF_HOSTNAME=server4.example.com
+      - SELF_HOSTNAME=amsterdam.storage.com
     networks:
       testnet:
         aliases:
-          - server4.example.com
+          - amsterdam.storage.com
 
-  storage_server5:
+  storage_bangalore:
     deploy:
       replicas: 1
       restart_policy:
         condition: on-failure
         delay: 5s
         max_attempts: 3
-      # placement:
-      #   constraints:
-      #     - node.hostname == your-hostname-2-here
+      placement:
+        constraints:
+          - node.hostname == priyansh-Inspiron-3543
     image: presto412/storev1
-    hostname: server5.example.com
     command: ./node_modules/.bin/nodemon
+    hostname: bangalore.storage.com
+    environment:
+      - SELF_HOSTNAME=bangalore.storage.com
+    ports:
+      - "3004:3000"
     volumes:
       - "/tmp/uploads:/tmp/uploads"
       - ".:/usr/src/app/"
-    environment:
-      - SELF_HOSTNAME=server5.example.com
-    ports:
-      - "3004:3000"
     networks:
       testnet:
         aliases:
-          - server5.example.com
+          - bangalore.storage.com

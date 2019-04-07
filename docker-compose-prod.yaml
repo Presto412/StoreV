@@ -4,8 +4,9 @@ networks:
   testnet:
     external:
       name: testnet
+
 services:
-  storage_server1:
+  central_server:
     deploy:
       replicas: 1
       restart_policy:
@@ -14,48 +15,48 @@ services:
         max_attempts: 3
       placement:
         constraints:
-          - node.hostname == priyansh-Inspiron-3543
-    image: presto412/storev1:latest
+          - node.hostname == centralserver
+    image: presto412/storev1
+    hostname: nyc.central.com
     command: npm start
-    hostname: server1.example.com
-    environment:
-      - SELF_HOSTNAME=server1.example.com
-    ports:
-      - "3000:3000"
     volumes:
       - "/tmp/uploads:/tmp/uploads"
       # - ".:/usr/src/app/"
+    environment:
+      - SELF_HOSTNAME=nyc.central.com
+    ports:
+      - "3000:3000"
     networks:
       testnet:
         aliases:
-          - server1.example.com
+          - nyc.central.com
 
-  storage_server2:
+  storage_toronto:
     deploy:
       replicas: 1
       restart_policy:
         condition: on-failure
         delay: 5s
         max_attempts: 3
-      # placement:
-      #   constraints:
-      #     - node.hostname == harshit-Lenovo-G50-80
-    image: presto412/storev1:latest
-    hostname: server2.example.com
+      placement:
+        constraints:
+          - node.hostname == toronto
+    image: presto412/storev1
+    hostname: toronto.storage.com
     command: npm start
     ports:
       - "3001:3000"
     environment:
-      - SELF_HOSTNAME=server2.example.com
+      - SELF_HOSTNAME=toronto.storage.com
     volumes:
       - "/tmp/uploads:/tmp/uploads"
       # - ".:/usr/src/app/"
     networks:
       testnet:
         aliases:
-          - server2.example.com
+          - toronto.storage.com
 
-  storage_server3:
+  storage_singapore:
     deploy:
       replicas: 1
       restart_policy:
@@ -64,34 +65,34 @@ services:
         max_attempts: 3
       placement:
         constraints:
-          - node.hostname == priyansh-Inspiron-3543
-    image: presto412/storev1:latest
-    hostname: server3.example.com
+          - node.hostname == singapore
+    image: presto412/storev1
+    hostname: singapore.storage.com
     command: npm start
     ports:
       - "3002:3000"
     environment:
-      - SELF_HOSTNAME=server3.example.com
+      - SELF_HOSTNAME=singapore.storage.com
     volumes:
       - "/tmp/uploads:/tmp/uploads"
       # - ".:/usr/src/app/"
     networks:
       testnet:
         aliases:
-          - server3.example.com
+          - singapore.storage.com
 
-  storage_server4:
+  storage_amsterdam:
     deploy:
       replicas: 1
       restart_policy:
         condition: on-failure
         delay: 5s
         max_attempts: 3
-      # placement:
-      #   constraints:
-      #     - node.hostname == your-hostname-2-here
-    image: presto412/storev1:latest
-    hostname: server4.example.com
+      placement:
+        constraints:
+          - node.hostname == amsterdam
+    image: presto412/storev1
+    hostname: amsterdam.storage.com
     command: npm start
     volumes:
       - "/tmp/uploads:/tmp/uploads"
@@ -99,33 +100,33 @@ services:
     ports:
       - "3003:3000"
     environment:
-      - SELF_HOSTNAME=server4.example.com
+      - SELF_HOSTNAME=amsterdam.storage.com
     networks:
       testnet:
         aliases:
-          - server4.example.com
+          - amsterdam.storage.com
 
-  storage_server5:
+  storage_bangalore:
     deploy:
       replicas: 1
       restart_policy:
         condition: on-failure
         delay: 5s
         max_attempts: 3
-      # placement:
-      #   constraints:
-      #     - node.hostname == your-hostname-2-here
-    image: presto412/storev1:latest
-    hostname: server5.example.com
+      placement:
+        constraints:
+          - node.hostname == bangalore
+    image: presto412/storev1
     command: npm start
+    hostname: bangalore.storage.com
+    environment:
+      - SELF_HOSTNAME=bangalore.storage.com
+    ports:
+      - "3004:3000"
     volumes:
       - "/tmp/uploads:/tmp/uploads"
       # - ".:/usr/src/app/"
-    environment:
-      - SELF_HOSTNAME=server5.example.com
-    ports:
-      - "3004:3000"
     networks:
       testnet:
         aliases:
-          - server5.example.com
+          - bangalore.storage.com

@@ -47,21 +47,28 @@
         <td><%= file.date %></td>
         <td><%= file.hash %></td>
         <td>
-          <a class="button" onclick="() => getDownloadLink(<%= file.hash %>)">
-            Download
-          </a>
+          <button onclick="getDownloadLink('<%= file.hash %>')">
+            Generate Download Link
+          </button>
         </td>
       </tr>
       <% }); %>
     </table>
 
+    <p id="dlink"></p>
+
     <script>
       function getDownloadLink(hash) {
+        console.log("hash is", hash);
+        document.getElementById("dlink").innerHTML =
+          "Please wait while the link loads..";
         $.ajax({
           type: "GET",
           url: "/getServerToDownloadFrom?hash=" + hash,
           success: function(response) {
             console.log("sresponse", response);
+            document.getElementById("dlink").innerHTML =
+              "<a href=" + response.url + ">Download Link</a>";
           },
           error: function(response) {
             console.log("fresponse", response);

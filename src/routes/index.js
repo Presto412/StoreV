@@ -5,7 +5,6 @@ const request = require("request-promise").defaults({ encoding: null });
 var upload = multer({ dest: "/tmp/uploads/" });
 const fs = require("fs");
 const path = require("path");
-const sha1 = require("js-sha1");
 
 const mapPath = path.join(
   __dirname,
@@ -26,6 +25,7 @@ const hostnameToIP = {
   "singapore.storage.com": process.env.STORAGE_SINGAPORE_IP,
   "amsterdam.storage.com": process.env.STORAGE_AMSTERDAM_IP
 };
+
 const generateRandomIP = () => {
   let randomByte = function() {
     return Math.round(Math.random() * 256);
@@ -54,9 +54,9 @@ const getServerByDistance = async inputCity => {
     })
   );
   distances = distances.map((response, index) => {
-    return { distance: response.distance, hostname: cities[index] };
+    return { distance: JSON.parse(response).distance, hostname: cities[index] };
   });
-  return distances.sort((a, b) => a.distance <= b.distance);
+  return distances.sort((a, b) => a.distance >= b.distance);
 };
 
 const getCityFromIP = ip => {
@@ -65,7 +65,10 @@ const getCityFromIP = ip => {
     ip +
     "?access_key=" +
     process.env.IPCITY_ACCESSKEY;
+  console.log("TCL: url", url);
+
   return request(url).then(response => {
+    response = JSON.parse(response);
     return response.city;
   });
 };
@@ -237,10 +240,22 @@ router.get("/download", (req, res, next) => {
   return res.json({ message: "file no exist", success: false });
 });
 
+const generateValidIP = async () => {
+  let ip = generateRandomIP();
+  console.log("TCL: ip", ip);
+  let city = await getCityFromIP(ip);
+  if (city == null) {
+    return generateValidIP();
+  }
+  console.log("city", city);
+
+  return { city };
+};
 router.get("/getServerToDownloadFrom", async (req, res, next) => {
-  const ip = generateRandomIP();
-  const city = await getCityFromIP(ip);
+  const { city } = await generateValidIP();
+  console.log("TCL: city", city);
   const servers = await getServerByDistance(city);
+  console.log("TCL: servers", servers);
   if (!fs.existsSync(mapPath)) {
     return res.json({ success: false, message: "no files yet" });
   }
@@ -251,6 +266,7 @@ router.get("/getServerToDownloadFrom", async (req, res, next) => {
   for (let server of servers) {
     for (let host of map[req.query.hash].backups) {
       if (host.hostname === server.hostname) {
+        console.log("TCL: server.hostname", server.hostname);
         return res.json({
           url:
             "http://" +
