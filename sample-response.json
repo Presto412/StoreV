@@ -1,0 +1,35 @@
+{
+  "ip": "106.203.18.193",
+  "type": "ipv4",
+  "continent_code": "AS",
+  "continent_name": "Asia",
+  "country_code": "IN",
+  "country_name": "India",
+  "region_code": "PY",
+  "region_name": "Union Territory of Puducherry",
+  "city": "Puducherry",
+  "zip": "605009",
+  "latitude": 11.93,
+  "longitude": 79.83,
+  "location": {
+    "geoname_id": 1259425,
+    "capital": "New Delhi",
+    "languages": [
+      {
+        "code": "hi",
+        "name": "Hindi",
+        "native": "हिन्दी"
+      },
+      {
+        "code": "en",
+        "name": "English",
+        "native": "English"
+      }
+    ],
+    "country_flag": "http://assets.ipstack.com/flags/in.svg",
+    "country_flag_emoji": "🇮🇳",
+    "country_flag_emoji_unicode": "U+1F1EE U+1F1F3",
+    "calling_code": "91",
+    "is_eu": false
+  }
+}

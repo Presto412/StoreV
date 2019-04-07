@@ -14,6 +14,61 @@ const mapPath = path.join(
   "data",
   "maps-" + process.env.SELF_HOSTNAME.split(".example.com")[0] + ".json"
 );
+const cities = [
+  "bangalore.storage.com",
+  "amsterdam.storage.com",
+  "toronto.storage.com",
+  "singapore.storage.com"
+];
+const hostnameToIP = {
+  "bangalore.storage.com": process.env.STORAGE_BANGALORE_IP,
+  "toronot.storage.com": process.env.STORAGE_TORONTO_IP,
+  "singapore.storage.com": process.env.STORAGE_SINGAPORE_IP,
+  "amsterdam.storage.com": process.env.STORAGE_AMSTERDAM_IP
+};
+const generateRandomIP = () => {
+  let randomByte = function() {
+    return Math.round(Math.random() * 256);
+  };
+
+  let isPrivate = function(ip) {
+    return /^10\.|^192\.168\.|^172\.16\.|^172\.17\.|^172\.18\.|^172\.19\.|^172\.20\.|^172\.21\.|^172\.22\.|^172\.23\.|^172\.24\.|^172\.25\.|^172\.26\.|^172\.27\.|^172\.28\.|^172\.29\.|^172\.30\.|^172\.31\./.test(
+      ip
+    );
+  };
+  let ip =
+    randomByte() + "." + randomByte() + "." + randomByte() + "." + randomByte();
+  if (isPrivate(ip)) return generateRandomIP();
+  return ip;
+};
+
+const getServerByDistance = async inputCity => {
+  let distances = await Promise.all(
+    cities.map(city => {
+      return request(
+        "https://www.distance24.org/route.json?stops=" +
+          inputCity +
+          "|" +
+          city.split(".storage.com")[0]
+      );
+    })
+  );
+  distances = distances.map((response, index) => {
+    return { distance: response.distance, hostname: cities[index] };
+  });
+  return distances.sort((a, b) => a.distance <= b.distance);
+};
+
+const getCityFromIP = ip => {
+  const url =
+    "http://api.ipstack.com/" +
+    ip +
+    "?access_key=" +
+    process.env.IPCITY_ACCESSKEY;
+  return request(url).then(response => {
+    return response.city;
+  });
+};
 
 /* GET home page. */
 router.get("/", function(req, res, next) {
@@ -28,13 +83,7 @@ router.post("/upload", upload.single("uploadFile"), async (req, res, next) => {
   let detailsArray = [];
   // get all servers
   // static for now
-  let hostnames = [
-    "server1.example.com",
-    "server2.example.com",
-    "server3.example.com",
-    "server4.example.com",
-    "server5.example.com"
-  ];
+  let hostnames = cities;
   let hostnamesToBackup = [];
   hostnamesToBackup[0] =
     hostnames[Math.floor(Math.random() * hostnames.length)];
@@ -185,50 +234,34 @@ router.get("/download", (req, res, next) => {
   if (possiblePresentFile.length !== 0) {
     return res.download(possiblePresentFile[0].path, fileDetails.name);
   }
-  // take a random path
-  let extPathIndex = Math.floor(Math.random() * fileBackups.length);
-  console.log(extPathIndex);
+  return res.json({ message: "file no exist", success: false });
+});
 
-  const fileHostDetails = fileBackups[extPathIndex];
-
-  request.get(
-    "http://" +
-      fileHostDetails.hostname +
-      ":3000/downloadFromPath?path=" +
-      fileHostDetails.path,
-    (err, response, body) => {
-      if (err) {
-        console.log("request error", err);
-        return next(err);
-      }
-      console.log(
-        "http://" +
-          fileHostDetails.hostname +
-          ":3000/downloadFromPath?path=" +
-          fileHostDetails.path
-      );
-
-      const tempPath = path.join(
-        __dirname,
-        "..",
-        "..",
-        "data",
-        fileDetails.name
-      );
-      console.log(response.url, response.headers);
-
-      fs.writeFile(tempPath, body, error => {
-        if (error) {
-          console.log("erroror");
-          throw error;
-        }
-
-        res.download(tempPath, fileDetails.name, () => {
-          fs.unlinkSync(tempPath);
+router.get("/getServerToDownloadFrom", async (req, res, next) => {
+  const ip = generateRandomIP();
+  const city = await getCityFromIP(ip);
+  const servers = await getServerByDistance(city);
+  if (!fs.existsSync(mapPath)) {
+    return res.json({ success: false, message: "no files yet" });
+  }
+  let map = JSON.parse(fs.readFileSync(mapPath));
+  if (!map[req.query.hash]) {
+    return res.json({ message: "file doesn't exist", success: false });
+  }
+  for (let server of servers) {
+    for (let host of map[req.query.hash].backups) {
+      if (host.hostname === server.hostname) {
+        return res.json({
+          url:
+            "http://" +
+            hostnameToIP[server.hostname] +
+            ":3000/download?" +
+            req.query.hash
         });
-      });
+      }
     }
-  );
+  }
+  return res.json({ success: false, message: "no servers hold the file" });
 });
 
 router.get("/downloadFromPath", (req, res, next) => {
