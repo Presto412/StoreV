@@ -122,7 +122,7 @@ router.post("/upload", upload.single("uploadFile"), async (req, res, next) => {
   for (const hostname of hostnamesToBackup) {
     let backupOptions = {
       method: "POST",
-      url: "http://" + hostname + backupUrl,
+      url: "http://" + hostname + ":3000/" + backupUrl,
       headers: {
         "content-type": "multipart/form-data"
       },
@@ -163,7 +163,7 @@ router.post("/upload", upload.single("uploadFile"), async (req, res, next) => {
   for (const hostName of hostnames) {
     var options = {
       method: "POST",
-      url: "http://" + hostName + mapUrl,
+      url: "http://" + hostName + ":3000/" + mapUrl,
       body: mapJson,
       json: true
     };
