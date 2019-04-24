@@ -34,7 +34,7 @@ In this project, I had deployed four storage servers via [DigitalOcean](www.digi
 - Make sure you've ssh installed and configured
 - Set up all the servers, and add your public key found in `.ssh/`
 - Create a `.env` file like the `.env.example` file, with all corresponding IPs
-- Set the `NODE_ENV` value to `dev`
+- Set the `NODE_ENV` value to `prod`
 - Setup docker, pull the images and start the network
   ```sh
   ./prod-master.sh
