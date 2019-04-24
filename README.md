@@ -12,7 +12,7 @@ In this project, I had deployed four storage servers via [DigitalOcean](www.digi
 
 ## Stack
 
-- Node.js, EJS Templates
+- Node.js(Express), EJS Templates
 - Docker, Docker Swarm
 
 ## Development Steps
