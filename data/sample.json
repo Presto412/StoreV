@@ -1,0 +1,56 @@
+{
+  "0347f8b35b22104339b5f9d9d1c8d3f0251b6bdc": {
+    "details": {
+      "name": "JKSUCI_AuthorAgreement (2).pdf",
+      "mimetype": "application/pdf",
+      "date": "Sun, 07 Apr 2019 23:55:04 GMT",
+      "size": 27087
+    },
+    "backups": [
+      {
+        "hostname": "bangalore.storage.com",
+        "path": "/tmp/uploads/528518c7e306e2f04e34117a5b245e6f"
+      },
+      {
+        "hostname": "amsterdam.storage.com",
+        "path": "/tmp/uploads/600405f52831535e54aaf590f2b14052"
+      }
+    ]
+  },
+  "b854f570a44c79fc3d2b9fa585f15b0c99823add": {
+    "details": {
+      "name": "intro2.mpeg",
+      "mimetype": "video/mpeg",
+      "date": "Sun, 07 Apr 2019 23:55:51 GMT",
+      "size": 2467630
+    },
+    "backups": [
+      {
+        "hostname": "bangalore.storage.com",
+        "path": "/tmp/uploads/35c6c40d224275ff9f8d338e49d92c7a"
+      },
+      {
+        "hostname": "toronto.storage.com",
+        "path": "/tmp/uploads/f7d69c6efac3cf498382271c94abf7c5"
+      }
+    ]
+  },
+  "6898cf224c9b47851f32df109c083f57346c07fb": {
+    "details": {
+      "name": "willow.jpeg",
+      "mimetype": "image/jpeg",
+      "date": "Mon, 08 Apr 2019 17:03:15 GMT",
+      "size": 148378
+    },
+    "backups": [
+      {
+        "hostname": "bangalore.storage.com",
+        "path": "/tmp/uploads/ebe388f9ab95c6bfaa62024321dcda5d"
+      },
+      {
+        "hostname": "amsterdam.storage.com",
+        "path": "/tmp/uploads/bd312eeab68d5da0cf91b38bbdfe7a6c"
+      }
+    ]
+  }
+}
