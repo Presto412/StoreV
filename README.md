@@ -19,7 +19,7 @@ In this project, I had deployed four storage servers via [DigitalOcean](http://w
 
 - Build the docker image
 
-```bash
+```sh
 ./scripts/setup-docker.sh
 ```
 
