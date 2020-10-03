@@ -25,7 +25,7 @@ In this project, I had deployed four storage servers via [DigitalOcean](http://w
 
 - Create a `.env` file like the `.env.example` file
 - Set the `NODE_ENV` value to `dev`
-- Run `./create-network-dev.sh`
+- Run `./scripts/dev-master.sh`
 - Go to [localhost](http://0.0.0.0:3000)
 
 ## Deploying to production
@@ -37,6 +37,6 @@ In this project, I had deployed four storage servers via [DigitalOcean](http://w
 - Set the `NODE_ENV` value to `prod`
 - Setup docker, pull the images and start the network
   ```sh
-  ./prod-master.sh
+  ./scripts/prod-master.sh
   ```
 - Check out port 3000 on your central IP and it should be running
