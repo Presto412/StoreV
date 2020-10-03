@@ -63,9 +63,9 @@ services:
         condition: on-failure
         delay: 5s
         max_attempts: 3
-      placement:
-        constraints:
-          - node.hostname == priyansh-Inspiron-3543
+      # placement:
+      #   constraints:
+      #     - node.hostname == priyansh-Inspiron-3543
     image: presto412/storev1
     hostname: singapore.storage.com
     command: ./node_modules/.bin/nodemon
@@ -113,9 +113,9 @@ services:
         condition: on-failure
         delay: 5s
         max_attempts: 3
-      placement:
-        constraints:
-          - node.hostname == priyansh-Inspiron-3543
+      # placement:
+      #   constraints:
+      #     - node.hostname == priyansh-Inspiron-3543
     image: presto412/storev1
     command: ./node_modules/.bin/nodemon
     hostname: bangalore.storage.com

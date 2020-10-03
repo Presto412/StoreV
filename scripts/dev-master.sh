@@ -1,7 +1,7 @@
 #!/bin/bash
-# set -ev
 
-ENV_LOCATION=$PWD/.env
+docker build -t=presto412/storev1 .
+ENV_LOCATION=.env
 source $ENV_LOCATION
 mkdir -p /tmp/uploads
 docker swarm leave -f

@@ -1,5 +1,5 @@
 #!/bin/bash
-ENV_LOCATION=$PWD/.env
+ENV_LOCATION=../.env
 echo $ENV_LOCATION
 source $ENV_LOCATION
 
