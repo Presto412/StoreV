@@ -17,12 +17,6 @@ In this project, I had deployed four storage servers via [DigitalOcean](http://w
 
 ## Development Steps
 
-- Build the docker image
-
-```bash
-./setup-docker.sh
-```
-
 - Create a `.env` file like the `.env.example` file
 - Get an access key from [IPSTACK](https://ipstack.com/) (It's free)
 - Set the `NODE_ENV` value to `dev`
