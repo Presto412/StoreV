@@ -24,6 +24,7 @@ In this project, I had deployed four storage servers via [DigitalOcean](http://w
 ```
 
 - Create a `.env` file like the `.env.example` file
+- Get an access key from [IPSTACK](https://ipstack.com/) (It's free)
 - Set the `NODE_ENV` value to `dev`
 - Run `./scripts/dev-master.sh`
 - Go to [localhost](http://0.0.0.0:3000)
