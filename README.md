@@ -20,7 +20,7 @@ In this project, I had deployed four storage servers via [DigitalOcean](http://w
 - Build the docker image
 
 ```bash
-./setup-docker.sh
+./scripts/setup-docker.sh
 ```
 
 - Create a `.env` file like the `.env.example` file
