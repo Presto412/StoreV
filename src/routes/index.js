@@ -1,10 +1,12 @@
 var express = require("express");
 var router = express.Router();
 var multer = require("multer");
-const request = require("request-promise").defaults({ encoding: null });
 var upload = multer({ dest: "/tmp/uploads/" });
 const fs = require("fs");
 const path = require("path");
+const ipConstants = require("../constants/ipConstants");
+const apiHelper = require("../utils/apiHelpers");
+const utilityHelper = require("../utils/utilityHelper");
 
 const mapPath = path.join(
   __dirname,
@@ -13,68 +15,9 @@ const mapPath = path.join(
   "data",
   "maps-" + process.env.SELF_HOSTNAME.split(".example.com")[0] + ".json"
 );
-const cities = [
-  "bangalore.storage.com",
-  "amsterdam.storage.com",
-  "toronto.storage.com",
-  "singapore.storage.com"
-];
-const hostnameToIP = {
-  "toronto.storage.com": process.env.STORAGE_TORONTO_IP + ":3001",
-  "singapore.storage.com": process.env.STORAGE_SINGAPORE_IP + ":3002",
-  "amsterdam.storage.com": process.env.STORAGE_AMSTERDAM_IP + ":3003",
-  "bangalore.storage.com": process.env.STORAGE_BANGALORE_IP + ":3004"
-};
-
-const generateRandomIP = () => {
-  let randomByte = function() {
-    return Math.round(Math.random() * 256);
-  };
-
-  let isPrivate = function(ip) {
-    return /^10\.|^192\.168\.|^172\.16\.|^172\.17\.|^172\.18\.|^172\.19\.|^172\.20\.|^172\.21\.|^172\.22\.|^172\.23\.|^172\.24\.|^172\.25\.|^172\.26\.|^172\.27\.|^172\.28\.|^172\.29\.|^172\.30\.|^172\.31\./.test(
-      ip
-    );
-  };
-  let ip =
-    randomByte() + "." + randomByte() + "." + randomByte() + "." + randomByte();
-  if (isPrivate(ip)) return generateRandomIP();
-  return ip;
-};
-
-const getServerByDistance = async inputCity => {
-  let distances = await Promise.all(
-    cities.map(city => {
-      return request(
-        "https://www.distance24.org/route.json?stops=" +
-          inputCity +
-          "|" +
-          city.split(".storage.com")[0]
-      );
-    })
-  );
-  distances = distances.map((response, index) => {
-    return { distance: JSON.parse(response).distance, hostname: cities[index] };
-  });
-  return distances.sort((a, b) => a.distance >= b.distance);
-};
-
-const getCityFromIP = ip => {
-  const url =
-    "http://api.ipstack.com/" +
-    ip +
-    "?access_key=" +
-    process.env.IPCITY_ACCESSKEY;
-  console.log("TCL: url", url);
-
-  return request(url).then(response => {
-    response = JSON.parse(response);
-    return response.city;
-  });
-};
 
 /* GET home page. */
-router.get("/", function(req, res, next) {
+router.get("/", function (req, res, next) {
   res.render("index", {
     title: "Storage Virtualization",
     success: true,
@@ -87,22 +30,8 @@ router.post("/upload", upload.single("uploadFile"), async (req, res, next) => {
     let detailsArray = [];
     // get all servers
     // static for now
-    let hostnames = cities;
-    let hostnamesToBackup = [];
-    hostnamesToBackup[0] =
-      hostnames[Math.floor(Math.random() * hostnames.length)];
-    while (true) {
-      if (hostnames.length < 2) {
-        break;
-      }
-      let elem = hostnames[Math.floor(Math.random() * hostnames.length)];
-      if (elem !== hostnamesToBackup[0]) {
-        hostnamesToBackup[1] = elem;
-        break;
-      }
-    }
-    const backupUrl = "/backup";
-    const mapUrl = "/updateMaps";
+    let hostnames = ipConstants.cities;
+    let hostnamesToBackup = utilityHelper.getHostnamesToBackup(hostnames);
     let fileStream = fs.createReadStream(req.file.path);
     const fileHash = req.body.fileHash;
     let map;
@@ -119,26 +48,13 @@ router.post("/upload", upload.single("uploadFile"), async (req, res, next) => {
       });
     }
 
-    let promises = [];
-    for (const hostname of hostnamesToBackup) {
-      let backupOptions = {
-        method: "POST",
-        url: "http://" + hostname + ":3000" + backupUrl,
-        headers: {
-          "content-type": "multipart/form-data"
-        },
-        formData: {
-          backupFile: {
-            value: fileStream,
-            options: {
-              filename: req.file.originalname,
-              contentType: req.file.mimetype
-            }
-          }
-        }
-      };
-      promises.push(request(backupOptions));
-    }
+    let promises = apiHelper.backupToHosts(
+      hostnamesToBackup,
+      fileStream,
+      req.file.originalname,
+      req.file.mimetype
+    );
+
     fs.unlinkSync(req.file.path);
     let results = await Promise.all(promises);
 
@@ -160,16 +76,7 @@ router.post("/upload", upload.single("uploadFile"), async (req, res, next) => {
     };
     fs.writeFileSync(mapPath, JSON.stringify(mapJson));
 
-    let mapPromises = [];
-    for (const hostName of hostnames) {
-      var options = {
-        method: "POST",
-        url: "http://" + hostName + ":3000" + mapUrl,
-        body: mapJson,
-        json: true
-      };
-      mapPromises.push(request(options));
-    }
+    let mapPromises = apiHelper.updateMaps(hostnames, mapJson);
     results = await Promise.all(promises);
     res.render("index", {
       title: "Storage Virtualization",
@@ -196,13 +103,7 @@ router.post("/backup", upload.single("backupFile"), (req, res, next) => {
 
 router.post("/updateMaps", (req, res, next) => {
   fs.writeFileSync(
-    path.join(
-      __dirname,
-      "..",
-      "..",
-      "data",
-      "maps-" + process.env.SELF_HOSTNAME.split(".example.com")[0] + ".json"
-    ),
+    mapPath,
     JSON.stringify(req.body)
   );
   return res.json({ success: true });
@@ -245,21 +146,10 @@ router.get("/download", (req, res, next) => {
   return res.json({ message: "file no exist", success: false });
 });
 
-const generateValidIP = async () => {
-  let ip = generateRandomIP();
-  console.log("TCL: ip", ip);
-  let city = await getCityFromIP(ip);
-  if (city == null) {
-    return generateValidIP();
-  }
-  console.log("city", city);
-
-  return { city };
-};
 router.get("/getServerToDownloadFrom", async (req, res, next) => {
-  const { city } = await generateValidIP();
+  const { city } = await utilityHelper.generateValidIP();
   console.log("TCL: city", city);
-  const servers = await getServerByDistance(city);
+  const servers = await apiHelper.getServerByDistance(city, ipConstants.cities);
   console.log("TCL: servers", servers);
   if (!fs.existsSync(mapPath)) {
     return res.json({ success: false, message: "no files yet" });
@@ -273,11 +163,7 @@ router.get("/getServerToDownloadFrom", async (req, res, next) => {
       if (host.hostname === server.hostname) {
         console.log("TCL: server.hostname", server.hostname);
         return res.json({
-          url:
-            "http://" +
-            hostnameToIP[server.hostname] +
-            "/download?hash=" +
-            req.query.hash
+          url: `http://${ipConstants.hostnameToIP[server.hostname]}/download?hash=${req.query.hash}`
         });
       }
     }
