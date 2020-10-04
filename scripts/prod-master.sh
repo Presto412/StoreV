@@ -24,4 +24,4 @@ ssh root@"$STORAGE_AMSTERDAM_IP" $CMD
 ssh root@"$STORAGE_BANGALORE_IP" $CMD
 ssh root@"$STORAGE_SINGAPORE_IP" $CMD
 
-docker stack deploy -c docker-compose-"$NODE_ENV".yaml test
+ssh root@"$CENTRAL_NYC_IP" "bash -s docker stack deploy -c docker-compose-"$NODE_ENV".yaml test"
