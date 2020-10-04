@@ -77,7 +77,7 @@ router.post("/upload", upload.single("uploadFile"), async (req, res, next) => {
     fs.writeFileSync(mapPath, JSON.stringify(mapJson));
 
     let mapPromises = apiHelper.updateMaps(hostnames, mapJson);
-    results = await Promise.all(promises);
+    results = await Promise.all(mapPromises);
     res.render("index", {
       title: "Storage Virtualization",
       success: true,
