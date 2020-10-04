@@ -27,11 +27,11 @@ const hostnameToIP = {
 };
 
 const generateRandomIP = () => {
-  let randomByte = function() {
+  let randomByte = function () {
     return Math.round(Math.random() * 256);
   };
 
-  let isPrivate = function(ip) {
+  let isPrivate = function (ip) {
     return /^10\.|^192\.168\.|^172\.16\.|^172\.17\.|^172\.18\.|^172\.19\.|^172\.20\.|^172\.21\.|^172\.22\.|^172\.23\.|^172\.24\.|^172\.25\.|^172\.26\.|^172\.27\.|^172\.28\.|^172\.29\.|^172\.30\.|^172\.31\./.test(
       ip
     );
@@ -47,9 +47,9 @@ const getServerByDistance = async inputCity => {
     cities.map(city => {
       return request(
         "https://www.distance24.org/route.json?stops=" +
-          inputCity +
-          "|" +
-          city.split(".storage.com")[0]
+        inputCity +
+        "|" +
+        city.split(".storage.com")[0]
       );
     })
   );
@@ -74,7 +74,7 @@ const getCityFromIP = ip => {
 };
 
 /* GET home page. */
-router.get("/", function(req, res, next) {
+router.get("/", function (req, res, next) {
   res.render("index", {
     title: "Storage Virtualization",
     success: true,
@@ -243,6 +243,28 @@ router.get("/download", (req, res, next) => {
     return res.download(possiblePresentFile[0].path, fileDetails.name);
   }
   return res.json({ message: "file no exist", success: false });
+});
+
+router.get("/delete", (req, res, next) => {
+  const fileHash = req.query.hash;
+  if (!fs.existsSync(mapPath)) {
+    return res.json({ message: "no files exist" });
+  }
+  let map = JSON.parse(fs.readFileSync(mapPath));
+  const fileDetails = map[fileHash].details;
+  let fileBackups = map[fileHash].backups;
+  let possiblePresentFile = fileBackups.filter(
+    file => file.hostname === process.env.SELF_HOSTNAME
+  );
+  if (possiblePresentFile.length !== 0) {
+    try {
+      fs.unlinkSync(possiblePresentFile[0].path + fileDetails.name);
+      return res.json({ message: "Deleted", success: true });
+    }
+    catch (err) {
+      return res.json({ message: "file no exist", success: false });
+    }
+  }
 });
 
 const generateValidIP = async () => {
