@@ -9,23 +9,135 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
   </head>
   <body>
+  <div id="navigation-style-table">
     <%- include partials/nav %>
+    </div>
     <style>
+
+
+    p {
+    font-weight: 400;
+
+ font-family: Source Code Pro, monospace;
+
+ color: #1f1ff6;
+
+ font-size: 15px;
+
+    }
+
+
+.top-text {
+
+font-family: Roboto Mono, monospace;
+
+font-size: 15px;
+
+font-style: regular;
+
+font-weight: 500;
+
+text-align: left;
+
+color: white;
+
+text-transform: uppercase;
+
+background: #342af1;
+
+}
+
+.link-button{
+
+display: inline-block;
+
+position: relative;
+
+border: none;
+
+box-shadow: 0px 0px 0px 0px #9fb4f2;
+
+font-weight: 400;
+
+font-family: Source Code Pro, monospace;
+
+font-size: 18px;
+
+padding: 10px 123px;
+
+background: #342af1;
+
+color: #ffffff;
+
+}
+
+  .link-button:hover {
+
+    top: 1px;
+
+	position: relative;
+
+    background: #3b31f5;
+
+      }
+
+    .link-button:active {
+
+  	background: #4138f2;
+
+  	top: 2px;
+
+	position: relative;
+
+}
+
+#red-message-table {
+
+color: #ff5938;
+
+}
+
+ #navigation-style-table {
+
+ font-weight: 400;
+
+ font-family: Source Code Pro, monospace;
+
+ color: #1f1ff6;
+
+ font-size: 20px;
+
+  }
+
       table {
+
         border-collapse: collapse;
+
+font-weight: 400;
+
+ font-family: Source Code Pro, monospace;
+
+ color: #1f1ff6;
+
+ font-size: 15px;
+
       }
 
       table,
       th,
       td {
-        border: 1px solid black;
+        border: 2px solid #342af1;
+        padding: 10px
       }
+
+
     </style>
     <% if(message) {%>
-    <p style="color: red"><%= message %></p>
+    <p id="red-message-table" ><%= message %></p>
     <% } %>
     <table id="table1">
-      <tr>
+
+      <tr class="top-text">
         <td>
           Filename
         </td>
@@ -41,13 +153,14 @@
         </td>
       </tr>
       <% map.forEach(function(file, i){ %>
+
       <tr>
         <td><%= file.name %></td>
         <td><%= file.size %></td>
         <td><%= file.date %></td>
         <td><%= file.hash %></td>
         <td>
-          <button onclick="getDownloadLink('<%= file.hash %>')">
+          <button class="link-button" onclick="getDownloadLink('<%= file.hash %>')">
             Generate Download Link
           </button>
         </td>

@@ -5,25 +5,32 @@
     <link rel="stylesheet" href="/stylesheets/style.css" />
   </head>
   <body>
+
+  <div id="navigation-style" >
     <%- include partials/nav %>
+    </div>
     <h1><%= title %></h1>
     <% if(success) { %>
-    <p style="color:forestgreen"><%= message %></p>
+    <p id="green-message"><%= message %></p>
     <% } else { %>
-    <p style="color: red"><%= message %></p>
+    <p id="red-message"><%= message %></p>
     <% } %>
-    <p>Upload any file</p>
+    <p>Upload any file:</p>
+
     <form
       id="uploadFileForm"
       action="/upload"
       method="post"
       enctype="multipart/form-data"
     >
+          <label class="upload-button" for="fileItem">CHOOSE FILE</label>
+      <%= file.name %>
       <input type="file" name="uploadFile" id="fileItem" />
       <input type="hidden" id="fileHash" name="fileHash" value="null" />
+
     </form>
     <br />
-    <button onclick="submitFile()">Submit</button>
+    <button onclick="submitFile()">SUBMIT</button>
   </body>
   <script src="https://unpkg.com/node-forge@0.7.6/dist/forge.min.js"></script>
   <script src="http://code.jquery.com/jquery-1.8.3.min.js"></script>
