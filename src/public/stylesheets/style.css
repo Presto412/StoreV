@@ -1,8 +1,92 @@
 body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+	padding: 50px;
+	font-family: Source Code Pro, monospace;
+}
+
+#navigation-style {
+	font-weight: 400;
+	font-family: Source Code Pro, monospace;
+	color: #1f1ff6;
+	font-size: 20px;
+}
+
+h1 {
+	font-family: Roboto Mono, monospace;
+	font-size: 50px;
+	font-style: italic;
+	font-weight: 900;
+	text-align: left;
+	color: #342af1;
+	text-transform: uppercase;
+}
+
+p {
+	font-weight: 400;
+	font-family: Source Code Pro, monospace;
+	color: #1f1ff6;
+	font-size: 30px;
 }
 
 a {
-  color: #00B7FF;
+	color: #00B7FF;
+}
+
+button {
+	border: none;
+	box-shadow: 0px 0px 0px 0px #9fb4f2;
+	font-weight: 400;
+	font-family: Source Code Pro, monospace;
+	font-size: 18px;
+	padding: 10px 150px;
+	background: linear-gradient(to bottom, #140d93 5%, #422ec9 100%);
+	color: #ffffff;
+}
+
+button:hover {
+	background: linear-gradient(to bottom, #140d93 5%, #422ec9 80%);
+	top: 1px;
+	position: relative;
+}
+
+button:active {
+	background: linear-gradient(to bottom, #140d93 5%, #422ec9 70%);
+	top: 2px;
+	position: relative;
+}
+
+input[type="file"] {
+	display: none;
+}
+
+.upload-button {
+	display: inline-block;
+	position: relative;
+	border: none;
+	box-shadow: 0px 0px 0px 0px #9fb4f2;
+	font-weight: 400;
+	font-family: Source Code Pro, monospace;
+	font-size: 18px;
+	padding: 10px 123px;
+	background: linear-gradient(to bottom, #140d93 5%, #422ec9 100%);
+	color: #ffffff;
+}
+
+.upload-button:hover {
+	background: linear-gradient(to bottom, #140d93 5%, #422ec9 80%);
+	top: 1px;
+	position: relative;
+}
+
+.upload-button:active {
+	background: linear-gradient(to bottom, #140d93 5%, #422ec9 70%);
+	top: 2px;
+	position: relative;
+}
+
+#green-message {
+	color: #03fc73;
+}
+
+#red-message {
+	color: #ff5938;
 }
