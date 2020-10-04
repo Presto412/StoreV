@@ -1,75 +1,78 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title><%= title %></title>
-    <link rel="stylesheet" href="/stylesheets/style.css" />
-  </head>
-  <body>
+   <head>
+      <title><%= title %></title>
+      <link rel="stylesheet" href="/stylesheets/style.css" />
+   </head>
+   <body>
+      <div id="navigation-style" >
+         <%- include partials/nav %>
+      </div>
+      <h1><%= title %></h1>
+      <% if(success) { %>
+      <p id="green-message"><%= message %></p>
+      <% } else { %>
+      <p id="red-message"><%= message %></p>
+      <% } %>
+      <p>Upload any file:</p>
+      <form
+         id="uploadFileForm"
+         action="/upload"
+         method="post"
+         enctype="multipart/form-data"
+         >
+         <label class="upload-button" for="fileItem">CHOOSE FILE</label>
+         <%= file.name %>
+         <input type="file" name="uploadFile" id="fileItem" />
+         <input type="hidden" id="fileHash" name="fileHash" value="null" />
+      </form>
+      <br />
+      <button onclick="submitFile()">SUBMIT</button>
+   </body>
+   <script src="https://unpkg.com/node-forge@0.7.6/dist/forge.min.js"></script>
+   <script src="http://code.jquery.com/jquery-1.8.3.min.js"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.min.js"></script>
+   <!-- <script src="/jsencrypt/bin/jsencrypt.min.js"></script> -->
+   <script type="text/javascript">
+      document.querySelector("#uploadFileForm").onchange = function(){
+        document.querySelector("#file-name").textContent = this.files[0].name;
+      }
 
-  <div id="navigation-style" >
-    <%- include partials/nav %>
-    </div>
-    <h1><%= title %></h1>
-    <% if(success) { %>
-    <p id="green-message"><%= message %></p>
-    <% } else { %>
-    <p id="red-message"><%= message %></p>
-    <% } %>
-    <p>Upload any file:</p>
+            function submitFile() {
 
-    <form
-      id="uploadFileForm"
-      action="/upload"
-      method="post"
-      enctype="multipart/form-data"
-    >
-          <label class="upload-button" for="fileItem">CHOOSE FILE</label>
-      <%= file.name %>
-      <input type="file" name="uploadFile" id="fileItem" />
-      <input type="hidden" id="fileHash" name="fileHash" value="null" />
-
-    </form>
-    <br />
-    <button onclick="submitFile()">SUBMIT</button>
-  </body>
-  <script src="https://unpkg.com/node-forge@0.7.6/dist/forge.min.js"></script>
-  <script src="http://code.jquery.com/jquery-1.8.3.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.min.js"></script>
-  <!-- <script src="/jsencrypt/bin/jsencrypt.min.js"></script> -->
-  <script type="text/javascript">
-    function submitFile() {
-      var form = document.getElementById("uploadFileForm");
-      var reader = new FileReader();
-      reader.onload = function() {
-        var fileContent = reader.result;
-        var md = forge.md.sha1.create();
-        md.update(fileContent);
-        var fileContentHash = md.digest().toHex();
-        document.getElementById("fileHash").value = fileContentHash;
-        $.ajax({
-          type: "POST",
-          url: "/checkHash",
-          contentType: "application/json;charset=utf-8",
-          data: JSON.stringify({
-            fileHash: fileContentHash
-          }),
-          success: function(response) {
-            console.log(response);
-            console.log("sresponse", response.success);
-            if (!response.success) {
-              form.submit();
-            } else {
-              console.log("not submtting form");
-              alert("File already exists");
+              var form = document.getElementById("uploadFileForm");
+              var reader = new FileReader();
+              reader.onload = function() {
+                var fileContent = reader.result;
+                var md = forge.md.sha1.create();
+                md.update(fileContent);
+                var fileContentHash = md.digest().toHex();
+                document.getElementById("fileHash").value = fileContentHash;
+                $.ajax({
+                  type: "POST",
+                  url: "/checkHash",
+                  contentType: "application/json;charset=utf-8",
+                  data: JSON.stringify({
+                    fileHash: fileContentHash
+                  }),
+                  success: function(response) {
+                    console.log(response);
+                    console.log("sresponse", response.success);
+                    if (!response.success) {
+                      form.submit();
+                    } else {
+                      console.log("not submtting form");
+                      alert("File already exists");
+                    }
+                  },
+                  error: function(response) {
+                    console.log("fresponse", response);
+                  }
+                });
+              };
+              const file = document.getElementById("fileItem").files[0];
+              reader.readAsText(file);
             }
-          },
-          error: function(response) {
-            console.log("fresponse", response);
-          }
-        });
-      };
-      const file = document.getElementById("fileItem").files[0];
-      reader.readAsText(file);
-    }
-  </script>
+
+   </script>
 </html>
